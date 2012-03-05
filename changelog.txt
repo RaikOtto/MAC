@@ -1,0 +1,28 @@
+To do list:
+2. MA has only Keq, not Vm - unclear
+4. LibSbml only version 2.4
+5. Mysterious example with one liner does not work. double activation and inhibition
+6. VM values dont appear in Parafile - okay?
+7. Check for false input e.g. division by zero
+8. SBML - change NT matrix - 2' ATP, 2' ADP
+9. Stoichiometry only works up to 9 -> change
+
+Done since 28_02_12:
+- Changed error message on LibSBML
+- switched EE*N to N*EE in Jacobi file
+- Corrected Jacobian Matrix -> deleted REGA/REGI Terms in the product rule
+- Inserted Parafile into Sim file and removed the Parafile from the network directory
+- Removed KMR and KMM vectors from parafile
+- Removed Jacobi link at the end of the simulation part
+- Added checks for VM, S0, X0, concentration
+
+Done since 29_01_12:
+- added check if libSBML is installed, if not: error message
+- Kix and Kax default in default.py added
+- Kix and Kax modifiable by txt comman +n3S4_2 -> KAX = 2
+- Fixed Kix and Kax reaction number problem
+- SBML contains the manually set KAX and KIX values
+- Added VM defaults - currently fixed to 1
+- Added VM user defined values, appear in SBML and in the Sim file
+- Added warning if a reaction contains an external metabolite and reaction type is nor irreversible, as well it changes the reaction type to reaction_type + 'IR'
+
