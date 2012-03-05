@@ -1,0 +1,36 @@
+R1: Glcp_x + ATP = Glcin + ADP
+R2: Glcin + ATP = G6P + ADP
+R3: G6P + NADP = PGL + NADPH ; MM
+R4: PGL = PGA
+R5: PGA = KDPG 
+R6: KDPG = GAP + PYR
+R7: GAP = DHAP
+R8: GAP + DHAP = FBP
+R9: FBP => F6P
+R10: F6P = G6P
+R11: GAP + NAD = DPGA + NADH
+R12: DPGA + ADP = P3G + ATP
+R13: P3G = P2G
+R14: P2G = PEPIR
+R15: PEP + ADP = PYR + ATP
+R16: PYR + CoA_x + NAD = AcetylCoA + NADH 
+R17: PYR + ATP = Oxaloacetate + ADP + Pi_x
+R18: Oxaloacetate + AcetylCoA = Citrate + CoA_x
+R19: Citrate = Isocitrate
+R20: Isocitrate + NADP = Oxoglutarate + NADPH 
+R21: Oxoglutarate + CoA_x + NAD = SuccinylCoA + NADH 
+R22: ADP + SuccinylCoA + Pi_x = ATP + Succinate + CoA_x
+R23: Succinate + FAD = FADH2 + Fumarate
+R24: Fumarate = Malate ; MM
+R25: Pyruvate + NADPH = Malate + NADP
+R26: Malate + NAD = Oxaloacetate + NADH
+R27: Isocitrate = Succinate + Glyoxalate
+R28: Glyoxalate + AcetylCoA = Malate + CoA_x
+R29: Oxoglutarate  -> Out_x
+R30: PEP -> Out_x
+R31: PYR -> Out_x
+R32: Oxaloacetate -> Out_x
+R33: ATP -> ADP + Pi_x
+R34: NADPH = NADP ; MM
+R35: 2' NADH + 5' ADP -> 2' NAD + 5' ATP
+R36: 2' FADH2 + 3' ADP -> 2' FAD + 3' ATP

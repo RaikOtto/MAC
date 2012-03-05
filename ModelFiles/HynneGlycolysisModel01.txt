@@ -1,0 +1,19 @@
+r02 GlcTrans: Glc_x = Glc ;
+r03 HK: Glc + ATP -> G6P + ADP ;
+r04 PGI: G6P = F6P ; 
+r05 PFK: F6P + ATP = FBP + ADP ; 
+r06 ALD: FBP = GAP + DHAP ; 
+r07 TIM: DHAP = GAP ; 
+r08 GAPDH: GAP + NAD  = BPG + NADH ; 
+r09 lpPEP: BPG + ADP = PEP + ATP ; 
+r10 PK: PEP + ADP -> Pyr + ATP  ; 
+r11 PDC: Pyr -> ACA ; 
+r12 ADH: ACA + NADH -> EtOH + NAD ; 
+r13 difEtOH: EtOH = EtOH_x ;
+r15 lpGlyc: DHAP + NADH -> Glyc + NAD ;
+r16 difGlyc: Glyc = Glyc_x ; 
+r18 difACA: ACA = ACA_x ;
+r22 storage: G6P + ATP -> ADP ;
+r23 consum: ATP -> ADP ; 
+r24 AK: ATP + AMP = 2 ADP ;
+

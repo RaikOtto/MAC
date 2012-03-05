@@ -1,0 +1,21 @@
+v01 Rubisco: CO2_x + RuBP  ->  2 PGA ;
+v02 PGK: PGA + ATP  =  BPGA + ADP ; 
+v03 G3Pdh: BPGA + NADPH_x  =  GAP + NADP_x + Pi ; 
+v04 TPI: GAP  =  DHAP ; 
+v05 F. Aldo: DHAP + GAP  =  FBP ; 
+v06 FBPase: FBP  -> F6P + Pi ; 
+v07 F. TKL: F6P + GAP =  E4P + X5P ; 
+v08 S. Aldo: E4P + DHAP =  SBP ; 
+v09 SBPase: SBP  -> S7P + Pi ; 
+v10 S. TKL: GAP + S7P  =  X5P + R5P ; 
+v11 R5Piso: R5P  = Ru5P ; 
+v12 X5Pepi: X5P  =  Ru5P ; 
+v13 Ru5Pk: Ru5P + ATP  ->  RuBP + ADP ; 
+v14 PGI: F6P  = G6P ; 
+v15 PGM: G6P  =  G1P ; 
+v16 Starch: G1P + ATP  ->  ADP + 2 Pi + starch_x ; 
+v17 TPT: PGA + Picyt_x  ->  PGAcyt_x + Pi ; 
+v18 TPT: GAP + Picyt_x  ->  GAPcyt_x + Pi ; 
+v19 TPT: DHAP + Picyt_x  ->  DHAPcyt_x + Pi ; 
+v20 Light: ADP + Pi -> ATP ; 
+

@@ -1,0 +1,10 @@
+v00: Glc_x = Glc 
+v01: Glc + 2' ATP -> 2' ADP + FBP ; -ATP
+v02: FBP = 2 TP ;
+v03: TP + NAD -> NADH + BPG ; 
+v04: BPG + 2 ADP -> Pyr + 2 ATP ; 
+v05: Pyr + NADH -> NAD + EtOH_x ; 
+v06: Pyr -> Pyr_x ; 
+v07: TP + NADH -> NAD ; 
+v08: ATP -> ADP ;
+

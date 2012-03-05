@@ -1,0 +1,16 @@
+v1c: PEP_x = PEP ; 
+v2c: PEP -> Pyr ; 
+v3c: PEP -> OAA ;
+v4c: OAA = Mal ;
+v1T: Pyrc -> Pyr ;
+v2T: Malc -> Mal ;
+v3Ta: Cit  + OAAc -> OAA ; 
+v3Tb: Cit + Malc -> Mal ;
+v1: Pyr + NAD + OAA -> Cit + NADH ; 
+v2: Cit + NAD -> NADH + TWOOG ; 
+v3: TWOOG + NAD + ADP -> Succ + NADH + ATP ; 
+v4: Succ -> Mal ; -OAA 
+v5: Mal + NAD = OAA + NADH ; 
+v6: Mal + NAD = Pyr + NADH ; 
+v1E: 2' NADH + 3' ADP -> 2' NAD + 3' ATP ; 
+v2E: ATP -> ADP ; 

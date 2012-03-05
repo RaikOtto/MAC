@@ -1,0 +1,1 @@
+activators / inhibitors * (( (Vf * substrates / Kms) - (Vr * products / Kmp) ) / ( 1 + ( substrates /Kms) + ( products / Kmp) ))

@@ -1,0 +1,7 @@
+Km = '1.0'
+Conc = '0.5'
+ReacType = 'MA'
+Keq = 'KEQ=1'
+Default_Reac_List = 'MAIR MMIR'
+KREG_KM = '1'
+VM = '1'

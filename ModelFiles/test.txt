@@ -1,0 +1,2 @@
+test_reac: 2 A = C ; C=A_2.0 +n8B C=C_0.7 KEQ=1.5 MM
+test_2_reac: A + C = B; MAIR
