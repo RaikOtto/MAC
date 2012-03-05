@@ -1,1 +1,8 @@
-This is a git testfile
+In order to run the example network type in the following on the linux console:
+
+python MAC.py Example.txt
+cd Example/
+octave
+source('Example_Sim.m')
+
+beginer's hint: using the tab button while typing in the file names saves a lot of time
