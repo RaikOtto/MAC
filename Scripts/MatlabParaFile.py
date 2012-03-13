@@ -2,12 +2,7 @@ import re
 
 def Create_Matlab_Para_File(c,d):
 	
-	text = ""
-	
-	text += '%%%%%%%%%%%%%%%%%%%%%%%\r\n'
-	text += '% NETWORK INFORMATION %\r\n'
-	text += '%%%%%%%%%%%%%%%%%%%%%%%\r\n\r\n'
-	
+	text = ''
 	text = Met_Names_Dyn_ext(text, c, d)
 	text = Reaction_types(text, c, d)
 	text = NT_matrix(text, c , d)

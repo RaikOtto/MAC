@@ -1,42 +1,22 @@
 import re, MatlabParaFile as MP
 
 def Create_Octave_file(c,d):
+
+	text = write_sim_file_header(c, d)	
+	text += MP.Create_Matlab_Para_File(c,d)
+	text = Add_default_values(text,c,d)	
+	text = write_sim_without_normalisation(c, d, text)
+	text = write_sim_with_normalisation(c, d, text)
 	
-	text = MP.Create_Matlab_Para_File(c,d)
-	
-	text = write_sim_header(c,d,text)
+	text += create_title('% End of simulations %')
 	
 	return text
 		
-def write_sim_header(c,d, text):
+def write_sim_file_header(c, d):
 	
-	title =  ' Simulation of '+c['Networkname'] + ' '
-	length_title = len(title)
-	spacer = '%%%' + ''.join(['%' for i in range(length_title)]) + '%%%\r\n'
-	text += '\r\n'
-	text += spacer + '%%%' + title + '%%%\r\n' + spacer
-	
-	text += 'source("../Scripts/functions.m")\r\n'
-	text += '\r\n'
-
-	text  = Add_default_values(text,c,d)
-	text += '\r\n'
-		
-
-	text += 'T = [0:0.1:50];\r\n'
-	text += '[S] = lsode("'+c['Networkname']+'", X0, T);\r\n'
-	
-	text += 'plot(T,[S]);\r\n'
-	text += '%axis([0,25,-2,2]);\r\n'
-	text += 'title("'+c['Networkname']+'");\r\n'
-	text += 'xlabel("time");\r\n'
-	text += 'ylabel("concentration");\r\n'
-	
-	text += 'legend( '
-	i = 0
-	while i < c['nr_dyn']: text += '"'+c['met_names'][i]+'", '; i += 1
-	text = text[:-2] + ' );\r\n'
-	#text = text + '[J,EE] = '+c['Networkname']+'_Jacobi(N,X0);\r\n'
+	# just creates the comment titles in a convenient way
+	text = create_title(' Parameters of simulation file '+c['Networkname'] + ' ')
+	text += 'source("../Scripts/functions.m")\r\n\r\n'
 	
 	return text
 	
@@ -82,6 +62,7 @@ def Add_default_values(text,c,d):
 	# X0 and S0 defaults
 	X0 = 'X0 = [ '
 	S0 = 'S0 = [ '
+	
 	# VM values
 	text += 'V0  = [ '
 	reacs = [ str(key) for key in sorted( [ int(key) for key in d.keys() ] ) ]
@@ -108,25 +89,74 @@ def Add_default_values(text,c,d):
 	text += 'para'+c['Networkname']+'.VM  = V0;\r\n'
 	text += 'para'+c['Networkname']+'.S0  = S0;\r\n'
 	types = [reac_type for reac_type in [d[key]['type'] for key in d.keys() ] ]
-	if 'MM' in types or 'MMIR' in types:	text += 'para'+c['Networkname']+'.KM = KM;\r\n'	
-	text += '\r\n'
+	if 'MM' in types or 'MMIR' in types:	text += 'para'+c['Networkname']+'.KM = KM;\r\n'		
 	
+	text += '% End default values %\r\n\r\n'
 	
-	# VM values
-	text += 'VM  = ' + c['Networkname'] + '(X0,V0); % normalize VM parameter\r\n\r\n'
+	return text	
+		
+def write_sim_without_normalisation(c,d, text):
 	
-	# VM checks
-	text = write_VM_checks(text)
+	text += create_title('% Simulate without normalised parameters %')
+		
+	text = write_VM_checks(text, c)		
+		
+	text += 'subplot(2,1,1)\r\n'
+
+	text += 'T = [0:0.1:50];\r\n'
+	text += '[S] = lsode("'+c['Networkname']+'", X0, T);\r\n'
 	
-	text += 'para'+c['Networkname']+'.VM  = VM;\r\n'	
-	text += '\r\n% End default values %\r\n'
+	text += 'plot(T,[S]);\r\n'
+	text += 'title("'+c['Networkname']+' without normalised parameters");\r\n'
+	text += 'xlabel("time");\r\n'
+	text += 'ylabel("concentration");\r\n'
+	
+	text += 'legend( '
+	i = 0
+	while i < c['nr_dyn']: text += '"'+c['met_names'][i]+'", '; i += 1
+	text = text[:-2] + ' );\r\n\r\n\r\n'
 	
 	return text
 	
-def write_VM_checks(text):
+def write_sim_with_normalisation(c,d, text):
+
+	text += create_title('% Simulate with normalised parameters %')
+
+	# Normalise VM values
+	text += 'para'+c['Networkname'] + '.VM = '+c['Networkname'] + '(X0,V0); % normalize VM parameter\r\n'
+
+	# VM checks
+	text = write_VM_checks(text, c)	
+	
+	text += 'subplot(2,1,2)\r\n'
+	
+	text += 'T = [0:0.1:50];\r\n'
+	text += '[S] = lsode("'+c['Networkname']+'", X0, T);\r\n'
+	
+	text += 'plot(T,[S]);\r\n'
+	text += 'title("'+c['Networkname']+' with normalised parameters");\r\n'
+	text += 'xlabel("time");\r\n'
+	text += 'ylabel("concentration");\r\n'
+	
+	text += 'legend( '
+	i = 0
+	while i < c['nr_dyn']: text += '"'+c['met_names'][i]+'", '; i += 1
+	text = text[:-2] + ' );\r\n\r\n\r\n'
+	
+	return text	
+		
+def create_title(title):
+	
+	length_title = len(title)
+	spacer = '%%%' + ''.join(['%' for i in range(length_title)]) + '%%%\r\n'
+	
+	return spacer + '%%%' + title + '%%%\r\n' + spacer + '\r\n'
+	
+def write_VM_checks( text, c):
 	
 	text += '% check for VM < 1, these have to be provided individually\r\n'
-	text += 'if (find(VM==-2)), printf(" ERROR, The metabolic state is inconcistent");end;\r\n'
-	text += 'if (find(VM==-1)), printf(" The flux vector contains equilibrium reactions: Specify Vmax manually");end;\r\n'
+	text += 'if (find(para'+c['Networkname']+'.VM==-2)), printf(" ERROR, The metabolic state is inconcistent");end;\r\n'
+	text += 'if (find(para'+c['Networkname']+'.VM==-1)), printf(" The flux vector contains equilibrium reactions: Specify Vmax manually");end;\r\n'
+	text += '\r\n\r\n'
 	
 	return text
