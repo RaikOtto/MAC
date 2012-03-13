@@ -1,5 +1,0 @@
-input: G1_x -> S1 ; +n8ADP C_S1_0.7 C_G1_x_3 KEQ_1.5 MM
-activation: S1 + 2' ATP = 2' ADP + 2 S2 ; C_ATP_0.2 C_ADP_0.8 +n8S1 -n1S3
-S2 + 2' ADP -> S3 + 2' ATP ; KEQ_2
-export: S3 = G2_x ; KEQ_1.5 -n1S1
-ATPase: ATP -> ADP
