@@ -123,7 +123,7 @@ def write_sim_with_normalisation(c,d, text):
 
 	text += create_title('% Simulation with scaled parameters %')
 	
-	text = Add_default_values(text,c,d)
+	text = Add_default_values(text,c,d).replace('% Default values %','').replace('% End default values %','')
 
 	# Normalise VM values
 	text += 'para'+c['Networkname'] + '.VM = '+c['Networkname'] + '(X0,V0); % normalize VM parameter\r\n'
