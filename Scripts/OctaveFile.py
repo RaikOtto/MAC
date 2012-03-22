@@ -8,6 +8,7 @@ def Create_Octave_file(c,d):
 	text = write_sim_without_normalisation(c, d, text)
 	text = write_sim_with_normalisation(c, d, text)
 	
+	text += create_title(' Monte-Carlo Simulations with scaled Parameters ')
 	text += create_title('% End of simulations %')
 	
 	return text
@@ -15,8 +16,9 @@ def Create_Octave_file(c,d):
 def write_sim_file_header(c, d):
 	
 	# just creates the comment titles in a convenient way
-	text = create_title(' Parameters of simulation file '+c['Networkname'] + ' ')
-	text += 'source("../Scripts/functions.m")\r\n\r\n'
+	text = create_title(' Network information '+c['Networkname'] + ' ')
+	text += 'source("../Scripts/functions.m")\r\n'
+	text += 'global para'+c['Networkname']+'\r\n\r\n'
 	
 	return text
 	
@@ -26,7 +28,7 @@ def Add_default_values(text,c,d):
 	
 	nr_reacs = c['nr_reactions']
 	
-	text += '\r\n% Default values %\r\n\r\n'
+	text += '\r\n% Default values %\r\n'
 	
 	keq_list = [kq for kq in [ d[str(entry)]['KEQ'] for entry in range(1,nr_reacs+1) ]]
 	text += 'Keq = [ '+ ' '.join(keq_list) +'];\r\n'
@@ -81,11 +83,9 @@ def Add_default_values(text,c,d):
 	text += 'if (min([X0,S0]) <0), printf("ERROR, negative concentration: %f\\n",min([X0,S0]));end;\r\n'
 	
 	text += '\r\n'
-	text += 'global para'+c['Networkname']+'\r\n'
 	text += 'para'+c['Networkname']+'.Keq = Keq;\r\n'
 	text += 'para'+c['Networkname']+'.KREG = KREG;\r\n'
 	text += 'para'+c['Networkname']+'.KREG_nh = KREG_nh;\r\n'
-	text += 'para'+c['Networkname']+'.N  = N;\r\n'
 	text += 'para'+c['Networkname']+'.VM  = V0;\r\n'
 	text += 'para'+c['Networkname']+'.S0  = S0;\r\n'
 	types = [reac_type for reac_type in [d[key]['type'] for key in d.keys() ] ]
@@ -94,10 +94,11 @@ def Add_default_values(text,c,d):
 	text += '% End default values %\r\n\r\n'
 	
 	return text	
-		
+
+
 def write_sim_without_normalisation(c,d, text):
 	
-	text += create_title('% Simulate without normalised parameters %')
+	text += create_title('% Simulation %')
 		
 	text = write_VM_checks(text, c)		
 		
@@ -120,7 +121,9 @@ def write_sim_without_normalisation(c,d, text):
 	
 def write_sim_with_normalisation(c,d, text):
 
-	text += create_title('% Simulate with normalised parameters %')
+	text += create_title('% Simulation with scaled parameters %')
+	
+	text = Add_default_values(text,c,d)
 
 	# Normalise VM values
 	text += 'para'+c['Networkname'] + '.VM = '+c['Networkname'] + '(X0,V0); % normalize VM parameter\r\n'

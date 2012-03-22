@@ -294,7 +294,7 @@ def Set_Defaults( d, key):
 	
 	if not 'IR' in d[key]['type']:
 		
-		if '->' in d[key]['reaction'] or extern: 
+		if '->' in d[key]['reaction']: 
 			d[key]['type'] = d[key]['type'].strip() + 'IR'
 			print 'Warning, changing reaction Nr.'+str(key)+ ' to irreversible!'	
 			

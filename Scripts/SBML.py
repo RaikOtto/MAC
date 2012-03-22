@@ -3,7 +3,7 @@ import logging
 
 def Create_SBML_file(c, d):
 	"""
-	This script creates the SBML file using LibSBML. It follows the pattern of creating the
+	This script creates the SBML file using LibSBML. It follows this pattern:
 	1. Network
 	2. Compartment
 	3. Reactions
@@ -16,12 +16,11 @@ def Create_SBML_file(c, d):
 	model, sbmlDoc  = initialise(c['Networkname'])
 	
 	load_species(model, mets)
-	load_reactions(model, d, mets, sbmlDoc)	
+	load_reactions(model, c, d, mets, sbmlDoc)	
 	load_initials(sbmlDoc, model, c)
 		
 	result_string = sbmlDoc.toSBML()
 	result_string = '<?xml version="1.0" encoding="UTF-8"?>\r\n' + result_string	
-		
 	return result_string
 	
 def initialise(Networkname):
@@ -59,13 +58,13 @@ def load_species(model, mets):
 			sp.setBoundaryCondition(1)
 		model.addSpecies(sp)
 		
-def load_reactions(model, d, mets, sbmlDoc):
+def load_reactions(model, c, d, mets, sbmlDoc):
 	"""
 	Responsible for creating the reactions.
 	"""
 	
 	for key in sorted([ int(key) for key in d.keys()]): 
-
+		
 		r = model.createReaction()
 		r.setId('reaction_nr_'+d[str(key)]['number'])
 		r.setName(d[str(key)]['label'])
@@ -86,7 +85,22 @@ def load_reactions(model, d, mets, sbmlDoc):
 			# loading parameters
 			r.createReactant().setSpecies(species)
 			re = r.getReactant(species)
-			re.setStoichiometry(int(stoc))
+			
+			if str(key) in c['KNR']: 
+			# the KNR vector contains the indices of the reactions with metabolites that 
+			# possess a stoichiometrical value different from their kinetic coefficient
+			# KNS contains the indicies of the metabolites in the c['met_names'] dictionary
+			# if this is the case, the stoichiometrical values is taken, not the kinetic
+			
+				if str(c['met_names'].index(sub)+1) in c['KNS']: 
+				
+					horizontal_entry	= c['met_names'].index(sub)
+					vertical_entry		= int(key)-1
+					stoc_value = abs( int(c['NT'][horizontal_entry][vertical_entry] ) )
+					re.setStoichiometry( stoc_value)
+					
+			else: re.setStoichiometry(int(stoc))
+			
 			re.setName(sub)
 			
 			if '_x' in sub: 
@@ -102,7 +116,19 @@ def load_reactions(model, d, mets, sbmlDoc):
 			# loading parameters
 			r.createProduct().setSpecies(species)
 			re = r.getProduct(species)
-			re.setStoichiometry(int(stoc))
+			
+			if str(key) in c['KNR']: 
+			# analog to above KNR check for subs
+			
+				if str(c['met_names'].index(prod)+1) in c['KNS']: 
+				
+					horizontal_entry	= c['met_names'].index(prod)
+					vertical_entry		= int(key)-1
+					stoc_value = abs( int(c['NT'][horizontal_entry][vertical_entry] ) )
+					re.setStoichiometry( stoc_value)
+					
+			else: re.setStoichiometry(int(stoc))
+			
 			re.setName(prod)
 			
 			if '_x' in prod: 
