@@ -6,7 +6,7 @@ def Create_Octave_file(c,d):
 	text += MP.Create_Matlab_Para_File(c,d)+ '\r\n\r\n'
 	text = move_KREG( text, True, False, c )
 	
-	text = Add_default_values(text,c,d)	
+	text += Add_default_values( c, d )	
 	text = write_sim_without_normalisation(c, d, text)
 	text = write_sim_with_normalisation(c, d, text)
 	
@@ -24,11 +24,12 @@ def write_sim_file_header(c, d):
 	
 	return text
 	
-def Add_default_values(text,c,d):
+def Add_default_values( c, d ):
 	
 	# SX and Keq part not final
 	
 	nr_reacs = c['nr_reactions']
+	text = ''
 	
 	text += '% Default values %\r\n\r\n'
 	
@@ -85,17 +86,24 @@ def Add_default_values(text,c,d):
 	text += '\r\n' + X0 + '];\r\n'
 	text += S0 + '];\r\n\r\n'
 	
-	text += 'para'+c['Networkname']+'.Keq = Keq;\r\n'
+	text += Add_Para_links( c )
+	
+	types = [reac_type for reac_type in [d[key]['type'] for key in d.keys() ] ]
+	if 'MM' in types or 'MMIR' in types:	text += 'para'+c['Networkname']+'.KM = KM;\r\n'		
+	text += '\r\n'
+
+	return text	
+	
+def Add_Para_links( c ):
+	
+	text = 'para'+c['Networkname']+'.Keq = Keq;\r\n'
 	text += 'para'+c['Networkname']+'.KREG = KREG;\r\n'
 	text += 'para'+c['Networkname']+'.KREG_nh = KREG_nh;\r\n'
 	text += 'para'+c['Networkname']+'.VM  = V0;\r\n'
 	text += 'para'+c['Networkname']+'.S0  = S0;\r\n'
-	types = [reac_type for reac_type in [d[key]['type'] for key in d.keys() ] ]
-	if 'MM' in types or 'MMIR' in types:	text += 'para'+c['Networkname']+'.KM = KM;\r\n'		
-	text += '\r\n'
-	
-	return text	
+	text += 'para'+c['Networkname']+'.X0  = X0;\r\n'
 
+	return text
 
 def write_sim_without_normalisation(c,d, text):
 	
@@ -121,11 +129,10 @@ def write_sim_with_normalisation(c,d, text):
 
 	text += create_title('% Simulation with scaled parameters %')
 	
-	text = Add_default_values(text,c,d)
-	text = move_KREG( text, False, True, c )
+	text += filter_scaled_parameters( Add_default_values( c, d ) )
 	
 	# Normalise VM values
-	text += 'para'+c['Networkname'] + '.VM = '+c['Networkname'] + '(X0,V0); % normalize VM parameter\r\n'
+	text += 'para'+c['Networkname'] + '.VM = '+c['Networkname'] + '(X0,V0); % normalize VM parameter\r\n\r\n'
 
 	# VM checks
 	text = write_VM_checks(text, c)	
@@ -157,9 +164,9 @@ def create_title(title):
 def write_VM_checks( text, c):
 	
 	text += '% check for VM < 1, these have to be provided individually\r\n'
-	text += 'if (find(para'+c['Networkname']+'.VM==-2)), printf(" ERROR, The metabolic state is inconcistent");end;\r\n'
-	text += 'if (find(para'+c['Networkname']+'.VM==-1)), printf(" The flux vector contains equilibrium reactions: Specify Vmax manually");end;\r\n'
-	text += '\r\n\r\n'
+	text += 'if (find(para'+c['Networkname']+'.VM==-2)), printf(" ERROR, The metabolic state is inconcistent\\r\\n");end;\r\n'
+	text += 'if (find(para'+c['Networkname']+'.VM==-1)), printf(" The flux vector contains equilibrium reactions: Specify Vmax manually\\r\\n");end;\r\n'
+	text += 'if ( length(find( round( abs(N*V0\') * 10^15 ) ==0)) != size(N)(1) ), printf("Warning: V0 vector not in the kernel of the matrix\\r\\n");end;\r\n\r\n'
 	
 	return text
 	
@@ -173,5 +180,16 @@ def move_KREG( text, delete, move, c ):
 	
 	if delete : text = text.replace(relocate,'')
 	if move: text = relocate	
+	
+	return text
+	
+def filter_scaled_parameters( text ):
+	"""
+	KREG_nh, Keq and their links to global para are not needed and are filtered
+	"""
+
+	#text = re.sub('Keq.*', '' , text)
+	text = re.sub('.*Keq.*\r\n', '' , text)
+	text = re.sub('.*KREG_nh.*\r\n', '' , text)
 	
 	return text

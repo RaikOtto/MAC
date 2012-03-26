@@ -1,10 +1,12 @@
 Changelist
 
 22_03_12:
-- Moved KREG vector
+- Moved KREG vector to default
 - Added header for default values
 - Added spacer in the plot command
 - Removed checks from scaled and unscaled simulation
+- Excluded KREG_nh, vetors and or parameter links in the scaled part
+- Added kernel check for N*V0'
 
 28_02_12:
 - Changed error message on LibSBML
