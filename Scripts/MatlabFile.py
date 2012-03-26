@@ -70,56 +70,63 @@ def write_reactions(c, d, text):
 			if r_type != 'MA': 
 				text += 'KP = [ '+ ' '.join( d[reac]['prods_ks'] ) +' ];'
 			text += '\r\n'
-		
-		
-		## modificators ##
-
-		# case only inhibitors 
-		if d[reac]['activators'] == [] and d[reac]['inhibitors'] != []:	
 	
-			text += 'I = [ '+(' ').join( d[reac]['inhibitors'] )+' ]; KIX =[ '
-			for item in d[reac]['inhibitors']: KREG_counter += 1; text += 'KREG('+str(KREG_counter)+') '
-			text += ']; nh = [ ' 
-			for item in d[reac]['inhibitors_nh']: KREG_nh_counter += 1; text += 'KREG_nh('+ str(KREG_nh_counter) +') '
-			text += '];\r\n'
-			text += f.Rate_Inhibit
-			text += reaction +' * REGI;\r\n' 
-			
-		# Case only activators	
-		elif d[reac]['activators'] != [] and d[reac]['inhibitors'] == []:	
-		
-			text += 'A = [ '+(' ').join( d[reac]['activators'] )+' ]; KAX =[ '
-			for item in d[reac]['activators']: KREG_counter += 1; text += 'KREG('+str(KREG_counter)+') '
-			text += ']; nh = [ ' 
-			for item in d[reac]['activators_nh']: KREG_nh_counter += 1; text += 'KREG_nh('+ str(KREG_nh_counter) +') '
-			text += '];\r\n'
-			text += f.Rate_Activate
-			text += reaction +' * REGA;\r\n' 	
-			
-		# Case activators and inhibitors		
-		elif d[reac]['activators'] != [] and d[reac]['inhibitors'] != []: 
-		
-			text += 'A = [ '+(' ').join( d[reac]['activators'] )+' ]; KAX =[ '
-			for item in d[reac]['activators']: KREG_counter += 1; text += 'KREG('+str(KREG_counter)+') '
-			text += ']; nh = [ ' 
-			for item in d[reac]['activators_nh']: KREG_nh_counter += 1; text += 'KREG_nh('+ str(KREG_nh_counter) +') '
-			text += '];\r\n'
-			
-			text += 'I = [ '+(' ').join( d[reac]['inhibitors'] )+' ]; KIX =[ '
-			for item in d[reac]['inhibitors']: KREG_counter += 1; text += 'KREG('+str(KREG_counter)+') '
-			text += ']; nh = [ ' 
-			for item in d[reac]['inhibitors_nh']: KREG_nh_counter += 1; text += 'KREG_nh('+ str(KREG_nh_counter) +') '
-			text += '];\r\n'
-			
-			text += f.Rate_Act_Inh
-			text += reaction + ' * REGA * REGI; \r\n'
-		
-		# Case no activators and inhibitors	
-		else: text += reaction + ';\r\n'
-		
-		text = text + '\r\n'
+		text = add_modifiers( text, c, d, reac, KREG_counter, KREG_nh_counter, reaction  )
 		
 	return text
+	
+	
+def add_modifiers( text, c, d, reac, KREG_counter, KREG_nh_counter, reaction):
+	
+
+	## modifiers ##
+
+	# case only inhibitors 
+	if d[reac]['activators'] == [] and d[reac]['inhibitors'] != []:	
+
+		text += 'I = [ '+(' ').join( d[reac]['inhibitors'] )+' ]; KIX =[ '
+		for item in d[reac]['inhibitors']: KREG_counter += 1; text += 'KREG('+str(KREG_counter)+') '
+		text += ']; nh = [ ' 
+		for item in d[reac]['inhibitors_nh']: KREG_nh_counter += 1; text += 'KREG_nh('+ str(KREG_nh_counter) +') '
+		text += '];\r\n'
+		text += f.Rate_Inhibit
+		text += reaction +' * REGI;\r\n' 
+		
+	# Case only activators	
+	elif d[reac]['activators'] != [] and d[reac]['inhibitors'] == []:	
+
+		text += 'A = [ '+(' ').join( d[reac]['activators'] )+' ]; KAX =[ '
+		for item in d[reac]['activators']: KREG_counter += 1; text += 'KREG('+str(KREG_counter)+') '
+		text += ']; nh = [ ' 
+		for item in d[reac]['activators_nh']: KREG_nh_counter += 1; text += 'KREG_nh('+ str(KREG_nh_counter) +') '
+		text += '];\r\n'
+		text += f.Rate_Activate
+		text += reaction +' * REGA;\r\n' 	
+		
+	# Case activators and inhibitors		
+	elif d[reac]['activators'] != [] and d[reac]['inhibitors'] != []: 
+
+		text += 'A = [ '+(' ').join( d[reac]['activators'] )+' ]; KAX =[ '
+		for item in d[reac]['activators']: KREG_counter += 1; text += 'KREG('+str(KREG_counter)+') '
+		text += ']; nh = [ ' 
+		for item in d[reac]['activators_nh']: KREG_nh_counter += 1; text += 'KREG_nh('+ str(KREG_nh_counter) +') '
+		text += '];\r\n'
+		
+		text += 'I = [ '+(' ').join( d[reac]['inhibitors'] )+' ]; KIX =[ '
+		for item in d[reac]['inhibitors']: KREG_counter += 1; text += 'KREG('+str(KREG_counter)+') '
+		text += ']; nh = [ ' 
+		for item in d[reac]['inhibitors_nh']: KREG_nh_counter += 1; text += 'KREG_nh('+ str(KREG_nh_counter) +') '
+		text += '];\r\n'
+		
+		text += f.Rate_Act_Inh
+		text += reaction + ' * REGA * REGI; \r\n'
+
+	# Case no activators and inhibitors	
+	else: text += reaction + ';\r\n'
+
+	text = text + '\r\n'
+			
+	return text	
 	
 def assign_stoichiometry(c, text):
 	

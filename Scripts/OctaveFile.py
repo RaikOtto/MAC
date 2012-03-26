@@ -3,7 +3,9 @@ import re, MatlabParaFile as MP
 def Create_Octave_file(c,d):
 
 	text = write_sim_file_header(c, d)	
-	text += MP.Create_Matlab_Para_File(c,d)
+	text += MP.Create_Matlab_Para_File(c,d)+ '\r\n\r\n'
+	text = move_KREG( text, True, False, c )
+	
 	text = Add_default_values(text,c,d)	
 	text = write_sim_without_normalisation(c, d, text)
 	text = write_sim_with_normalisation(c, d, text)
@@ -28,8 +30,9 @@ def Add_default_values(text,c,d):
 	
 	nr_reacs = c['nr_reactions']
 	
-	text += '\r\n% Default values %\r\n'
+	text += '% Default values %\r\n\r\n'
 	
+	text = move_KREG( text, False, True, c )	
 	keq_list = [kq for kq in [ d[str(entry)]['KEQ'] for entry in range(1,nr_reacs+1) ]]
 	text += 'Keq = [ '+ ' '.join(keq_list) +'];\r\n'
 	
@@ -76,13 +79,12 @@ def Add_default_values(text,c,d):
 		text += met + ' = ' + str(c['Conc_Dict'][met]) + ';\r\n'
 		if '_x' not in met:	X0 += met + ' '
 		else: S0 += met + ' '
+	
+	text += '\r\n% End default values %\r\n'
 		
 	text += '\r\n' + X0 + '];\r\n'
 	text += S0 + '];\r\n\r\n'
 	
-	text += 'if (min([X0,S0]) <0), printf("ERROR, negative concentration: %f\\n",min([X0,S0]));end;\r\n'
-	
-	text += '\r\n'
 	text += 'para'+c['Networkname']+'.Keq = Keq;\r\n'
 	text += 'para'+c['Networkname']+'.KREG = KREG;\r\n'
 	text += 'para'+c['Networkname']+'.KREG_nh = KREG_nh;\r\n'
@@ -90,8 +92,7 @@ def Add_default_values(text,c,d):
 	text += 'para'+c['Networkname']+'.S0  = S0;\r\n'
 	types = [reac_type for reac_type in [d[key]['type'] for key in d.keys() ] ]
 	if 'MM' in types or 'MMIR' in types:	text += 'para'+c['Networkname']+'.KM = KM;\r\n'		
-	
-	text += '% End default values %\r\n\r\n'
+	text += '\r\n'
 	
 	return text	
 
@@ -99,14 +100,10 @@ def Add_default_values(text,c,d):
 def write_sim_without_normalisation(c,d, text):
 	
 	text += create_title('% Simulation %')
-		
-	text = write_VM_checks(text, c)		
-		
-	text += 'subplot(2,1,1)\r\n'
 
-	text += 'T = [0:0.1:50];\r\n'
-	text += '[S] = lsode("'+c['Networkname']+'", X0, T);\r\n'
-	
+	text += 'subplot(2,1,1)\r\n'
+	text += 'T = [0:0.1:50];\r\n\r\n'
+	text += '[S] = lsode("'+c['Networkname']+'", X0, T);\r\n\r\n'
 	text += 'plot(T,[S]);\r\n'
 	text += 'title("'+c['Networkname']+' without normalised parameters");\r\n'
 	text += 'xlabel("time");\r\n'
@@ -119,12 +116,14 @@ def write_sim_without_normalisation(c,d, text):
 	
 	return text
 	
+	
 def write_sim_with_normalisation(c,d, text):
 
 	text += create_title('% Simulation with scaled parameters %')
 	
-	text = Add_default_values(text,c,d).replace('% Default values %','').replace('% End default values %','')
-
+	text = Add_default_values(text,c,d)
+	text = move_KREG( text, False, True, c )
+	
 	# Normalise VM values
 	text += 'para'+c['Networkname'] + '.VM = '+c['Networkname'] + '(X0,V0); % normalize VM parameter\r\n'
 
@@ -132,10 +131,8 @@ def write_sim_with_normalisation(c,d, text):
 	text = write_VM_checks(text, c)	
 	
 	text += 'subplot(2,1,2)\r\n'
-	
-	text += 'T = [0:0.1:50];\r\n'
-	text += '[S] = lsode("'+c['Networkname']+'", X0, T);\r\n'
-	
+	text += 'T = [0:0.1:50];\r\n\r\n'
+	text += '[S] = lsode("'+c['Networkname']+'", X0, T);\r\n\r\n'
 	text += 'plot(T,[S]);\r\n'
 	text += 'title("'+c['Networkname']+' with normalised parameters");\r\n'
 	text += 'xlabel("time");\r\n'
@@ -147,6 +144,7 @@ def write_sim_with_normalisation(c,d, text):
 	text = text[:-2] + ' );\r\n\r\n\r\n'
 	
 	return text	
+	
 		
 def create_title(title):
 	
@@ -155,11 +153,25 @@ def create_title(title):
 	
 	return spacer + '%%%' + title + '%%%\r\n' + spacer + '\r\n'
 	
+	
 def write_VM_checks( text, c):
 	
 	text += '% check for VM < 1, these have to be provided individually\r\n'
 	text += 'if (find(para'+c['Networkname']+'.VM==-2)), printf(" ERROR, The metabolic state is inconcistent");end;\r\n'
 	text += 'if (find(para'+c['Networkname']+'.VM==-1)), printf(" The flux vector contains equilibrium reactions: Specify Vmax manually");end;\r\n'
 	text += '\r\n\r\n'
+	
+	return text
+	
+	
+def move_KREG( text, delete, move, c ):
+	"""
+	This helper function moves the KREG vectors within the simulation file since it is needed at a different place than in the matlab file.
+	"""
+	
+	relocate = MP.build_KREG( text, c )
+	
+	if delete : text = text.replace(relocate,'')
+	if move: text = relocate	
 	
 	return text
