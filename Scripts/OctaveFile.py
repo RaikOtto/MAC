@@ -75,7 +75,7 @@ def Add_default_values( c, d ):
 	for reac in reacs: text += d[reac]['VM'] + ' '
 	text += '];\r\n\r\n'
 	
-	#text += 'V0 = abs(null(N))(1:end,1)\'; \r\n' ### ADDED !!! ###
+	#text += 'V0 = K; \r\n' ### ADDED !!! ###
 	
 	for met in c['met_names']:
 		
