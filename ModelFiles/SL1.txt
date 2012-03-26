@@ -1,7 +1,5 @@
-input : A_x -> S1
-S1 = S2
-S2 = S3
-S3 = S4
-S4 = S5
-S5 = B_x
-
+A_x = A0 ; C=A0_5 -n4D0 C=A_x_10 KEQ=10
+A0 = B0 ; C=B0_4
+B0 = C0 ; C=C0_3
+C0 = D0 ; C=D0_2
+D0 = D_x; C=D_x_1 KEQ=10
