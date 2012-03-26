@@ -8,7 +8,7 @@ def CreateMatlabFile(filename):
 	"""
 	
 	### preparation ###
-	networkname   = re.sub("\.\S*",'', filename)
+	networkname = re.sub("\.\S*",'', filename)
 	osfilename = sys.path[0] + '/' + networkname	
 	d = {}			 													# Reaction dictionary, only for reactions
 	c = {'Networkname': networkname, 'KREG_KM': [], 'Conc_Dict' : {}}	# Content dictionary, for background information
@@ -32,11 +32,9 @@ def CreateMatlabFile(filename):
 	else: os.makedirs(osfilename)
 	
 	# Move files
-	#open(osfilename+'/'+networkname+'_parameter.m','w').write(Para_file)
 	open(osfilename+'/'+networkname+'.m','w').write(Matlab_file)
 	open(osfilename+'/'+networkname+'_Jacobi.m','w').write(Jacobi_file)
 	open(osfilename+'/'+networkname+'_Sim.m','w').write(Octave_file)
-	
 	
 	try: # check if there is LibSBML installed:
 	
@@ -52,6 +50,5 @@ def CreateMatlabFile(filename):
 	
 if __name__ == "__main__":
 	
-	if len(sys.argv[:]) == 1: 
-		raise Exception('Need txt file')
+	if len(sys.argv[:]) == 1: raise Exception('Need txt file')
 	CreateMatlabFile(sys.argv[1]) 

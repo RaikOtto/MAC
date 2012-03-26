@@ -75,6 +75,8 @@ def Add_default_values( c, d ):
 	for reac in reacs: text += d[reac]['VM'] + ' '
 	text += '];\r\n\r\n'
 	
+	text += 'V0 = abs(null(N))(1:end,1)\'; \r\n' ### ADDED !!! ###
+	
 	for met in c['met_names']:
 		
 		text += met + ' = ' + str(c['Conc_Dict'][met]) + ';\r\n'
@@ -144,12 +146,12 @@ def write_sim_with_normalisation(c,d, text):
 	text += 'title("'+c['Networkname']+' with normalised parameters");\r\n'
 	text += 'xlabel("time");\r\n'
 	text += 'ylabel("concentration");\r\n'
-	
+
 	text += 'legend( '
 	i = 0
 	while i < c['nr_dyn']: text += '"'+c['met_names'][i]+'", '; i += 1
 	text = text[:-2] + ' );\r\n\r\n\r\n'
-	
+	text += 'print("jpg","plot.jpg");\r\n'
 	return text	
 	
 		
