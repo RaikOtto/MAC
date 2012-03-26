@@ -146,8 +146,10 @@ def assign_stoichiometry(c, text):
 	
 	text += 'if (length(t)>1);\r\n'
 	text += 'ix = find(V0==0);\r\n'
-	text += 'dSdt = V0./v;\r\n'
+	text += 'dSdt = V0(:)./v(:);\r\n'
 	text += 'dSdt(ix) = -1; % for reactions in equilibrium VM is assigned differently\r\n'
+	text += 'ix = find(dSdt<0);\r\n'
+	text += 'dSdt(ix) = -2; % negative values indicate inconsistent flux\r\n'
 	text += 'end;\r\n'
-	
+
 	return text
