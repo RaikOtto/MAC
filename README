@@ -8,6 +8,7 @@ Changelist
 - Excluded KREG_nh, vetors and or parameter links in the scaled part
 - Added kernel check for N*V0'
 - Wrote test file
+- Changed check at the end of the ODE matlaf file according to Ralph
 
 28_02_12:
 - Changed error message on LibSBML
