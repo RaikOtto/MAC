@@ -11,6 +11,7 @@ def Create_Octave_file(c,d):
 	text = write_sim_with_normalisation(c, d, text)
 	
 	text += create_title(' Monte-Carlo Simulations with scaled Parameters ')
+	text += '\r\n[J,EE] = '+c['Networkname']+'_Jacobi(N,X0); \r\n'
 	text += create_title('% End of simulations %')
 	
 	return text
@@ -70,12 +71,12 @@ def Add_default_values( c, d ):
 	S0 = 'S0 = [ '
 	
 	# VM values
-	text += 'V0  = [ '
+	text += 'V0  = [ ' #abs(K);\r\n'#
 	reacs = [ str(key) for key in sorted( [ int(key) for key in d.keys() ] ) ]
 	for reac in reacs: text += d[reac]['VM'] + ' '
 	text += '];\r\n\r\n'
 	
-	#text += 'V0 = K; \r\n' ### ADDED !!! ###
+	text += 'V0 = K; \r\n' ### ADDED !!! ###
 	
 	for met in c['met_names']:
 		
@@ -141,7 +142,7 @@ def write_sim_with_normalisation(c,d, text):
 	
 	text += 'subplot(2,1,2)\r\n'
 	text += 'T = [0:0.1:50];\r\n\r\n'
-	text += '[S] = lsode("'+c['Networkname']+'", X0, T);\r\n\r\n'
+	text += '[S] = lsode("'+c['Networkname']+'", 0.5 * X0, T);\r\n\r\n'
 	text += 'plot(T,[S]);\r\n'
 	text += 'title("'+c['Networkname']+' with normalised parameters");\r\n'
 	text += 'xlabel("time");\r\n'
@@ -168,7 +169,7 @@ def write_VM_checks( text, c):
 	text += '% check for VM < 1, these have to be provided individually\r\n'
 	text += 'if (find(para'+c['Networkname']+'.VM==-2)), printf(" ERROR, The metabolic state is inconcistent\\r\\n");end;\r\n'
 	text += 'if (find(para'+c['Networkname']+'.VM==-1)), printf(" The flux vector contains equilibrium reactions: Specify Vmax manually\\r\\n");end;\r\n'
-	text += 'if ( length(find( round( abs(N*V0\') * 10^15 ) ==0)) != size(N)(1) ), printf("Warning: V0 vector not in the kernel of the matrix\\r\\n");end;\r\n\r\n'
+	text += '%if ( length(find( round( abs(N*V0\') * 10^15 ) ==0)) != size(N)(1) ), printf("Warning: V0 vector not in the kernel of the matrix\\r\\n");end;\r\n\r\n'
 	
 	return text
 	

@@ -41,6 +41,7 @@ def CreateMatlabFile(filename):
 		import libsbml
 		SBML_file   = Scripts.SBML.Create_SBML_file(c, d)
 		open(osfilename+'/'+networkname+'.xml','w').write(SBML_file)
+		Scripts.Copasi_Jacobi.Show_Copasi_Jacobi(c)
 		
 	except:
 		
