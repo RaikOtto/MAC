@@ -1,5 +1,10 @@
 Changelist
 
+01_04_12:
+- added line '[J,EE] = Networkname_Jacobi() to the end'
+- added copasi language binding for the jacobian
+- second lsode is multiplied times 0.5 
+
 26_03_12:
 - Moved KREG vector to default
 - Added header for default values
