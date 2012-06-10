@@ -12,7 +12,7 @@ def Create_SBML_file(c, d):
 	"""
 
 	mets = c['met_names']
-	
+	print c
 	model, sbmlDoc  = initialise(c['Networkname'])
 	
 	load_species(model, mets)
@@ -277,7 +277,7 @@ def load_modifiers(formula, r, data, mets, l):
 		act_string += '( '+ Power +' / ( 1 + '+ Power +' ) ) *'
 		
 		add_nh( nh_value, mod_name, l )
-
+		
 		add_Mod( mod_name, l, 'Kax_', float(data['KREG_KM'][mod_name]) )
 		
 	formula = formula.replace('Kact *', act_string)[:-1] # get rid of * char
@@ -298,6 +298,7 @@ def load_modifiers(formula, r, data, mets, l):
 		inh_string += '(1 / ( 1 + ' + Power + ' ) ) *'
 		
 		add_nh( nh_value, mod_name, l )
+		
 		add_Mod( mod_name, l, 'Kix_', float(data['KREG_KM'][mod_name]))
 	
 	formula = formula.replace('Kinh *', inh_string)
