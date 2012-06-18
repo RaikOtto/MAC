@@ -30,17 +30,6 @@ def Remaining_Information(text,c,d):
 		text += ']; % What met. has different kin to stoch. coefficient\r\n'
 		text += '\r\n'
 	
-	"""	
-	here two vectors that were used in an earlier version are still kept to include them if needed
-	they are responsible for diverging kinetic, stoichiometric metabolite properties
-	text += 'KMR = [ '
-	for item in c['KMR']: text += str(item) + ' '
-	text += ']; % corresponding reactions\r\n'
-	text += 'KMM = [ '
-	for item in c['KMM']: text += str(item) + ' '
-	text += ']; % corresponding metabolites\r\n'
-	text += '\r\n'	
-	"""
 	
 	text += 'KREG_R = [ '
 	for item in c['KREG_R']: text += str(item) + ' '

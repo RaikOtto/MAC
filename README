@@ -1,5 +1,12 @@
 Changelist
 
+18_06_12
+- added KMR, KMM
+- Changed V0 to VM
+- Deleted line "V0 = K;" in _Sim
+- Changed all apparences of V0 to VM in the sim file
+- Added the pertub_vec in order to force the network to find the fix point
+
 01_04_12:
 - added line '[J,EE] = Networkname_Jacobi() to the end'
 - added copasi language binding for the jacobian

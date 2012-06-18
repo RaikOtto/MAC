@@ -12,7 +12,6 @@ def Create_SBML_file(c, d):
 	"""
 
 	mets = c['met_names']
-	print c
 	model, sbmlDoc  = initialise(c['Networkname'])
 	
 	load_species(model, mets)

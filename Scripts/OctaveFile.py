@@ -64,19 +64,28 @@ def Add_default_values( c, d ):
 
 		KM_vec = ' '
 		for item in KM: KM_vec = KM_vec + ' ' + str(item)
-		text += 'KM = ['+ KM_vec[2:] + '];\r\n'
+		text += 'KM = ['+ ' '.join([ str(int(float(value))) for value in KM_vec[2:].split(' ') ]) + '];\r\n'
+	
+	# KM values 
+	text += 'KMR = [ '
+	for item in c['KMR']: text += str(item) + ' '
+	text += ']; % corresponding reactions\r\n'
+	text += 'KMM = [ '
+	for item in c['KMM']: text += str(item) + ' '
+	text += ']; % corresponding metabolites\r\n'
+	text += '\r\n'	
 	
 	# X0 and S0 defaults
 	X0 = 'X0 = [ '
 	S0 = 'S0 = [ '
 	
 	# VM values
-	text += 'V0  = [ ' #abs(K);\r\n'#
+	text += 'VM  = [ ' #abs(K);\r\n'#
 	reacs = [ str(key) for key in sorted( [ int(key) for key in d.keys() ] ) ]
 	for reac in reacs: text += d[reac]['VM'] + ' '
 	text += '];\r\n\r\n'
 	
-	text += 'V0 = K; \r\n' ### ADDED !!! ###
+	#text += 'V0 = K; \r\n' ### ADDED !!! ###
 	
 	for met in c['met_names']:
 		
@@ -102,7 +111,7 @@ def Add_Para_links( c ):
 	text = 'para'+c['Networkname']+'.Keq = Keq;\r\n'
 	text += 'para'+c['Networkname']+'.KREG = KREG;\r\n'
 	text += 'para'+c['Networkname']+'.KREG_nh = KREG_nh;\r\n'
-	text += 'para'+c['Networkname']+'.VM  = V0;\r\n'
+	text += 'para'+c['Networkname']+'.VM  = VM;\r\n'
 	text += 'para'+c['Networkname']+'.S0  = S0;\r\n'
 	text += 'para'+c['Networkname']+'.X0  = X0;\r\n'
 
@@ -135,14 +144,20 @@ def write_sim_with_normalisation(c,d, text):
 	text += filter_scaled_parameters( Add_default_values( c, d ) )
 	
 	# Normalise VM values
-	text += 'para'+c['Networkname'] + '.VM = '+c['Networkname'] + '(X0,V0); % normalize VM parameter\r\n\r\n'
+	text += 'para'+c['Networkname'] + '.VM = '+c['Networkname'] + '(X0,VM); % normalize VM parameter\r\n\r\n'
 
 	# VM checks
 	text = write_VM_checks(text, c)	
 	
 	text += 'subplot(2,1,2)\r\n'
 	text += 'T = [0:0.1:50];\r\n\r\n'
-	text += '[S] = lsode("'+c['Networkname']+'", 0.5 * X0, T);\r\n\r\n'
+	
+	pertub_vec = "[ 1"
+	# pertubate network to force it to go to the fix point
+	for i in range(c['nr_reactions']-1):	pertub_vec += " 0"
+	pertub_vec += " ]"
+	
+	text += '[S] = lsode("'+c['Networkname']+'", X0 + '+pertub_vec+', T);\r\n\r\n'
 	text += 'plot(T,[S]);\r\n'
 	text += 'title("'+c['Networkname']+' with normalised parameters");\r\n'
 	text += 'xlabel("time");\r\n'
