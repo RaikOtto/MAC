@@ -154,7 +154,7 @@ def write_sim_with_normalisation(c,d, text):
 	
 	pertub_vec = "[ 1"
 	# pertubate network to force it to go to the fix point
-	for i in range(c['nr_reactions']-1):	pertub_vec += " 0"
+	for i in range(c['nr_dyn']-1):	pertub_vec += " 0"
 	pertub_vec += " ]"
 	
 	text += '[S] = lsode("'+c['Networkname']+'", X0 + '+pertub_vec+', T);\r\n\r\n'
