@@ -2,6 +2,9 @@ This is the Matlab automatization core script for simulationg metabolic networks
 
 Changelist
 
+06_09_12
+- Doc folder added
+
 18_06_12
 - added KMR, KMM
 - Changed V0 to VM
